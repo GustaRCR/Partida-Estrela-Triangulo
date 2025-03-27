@@ -4,18 +4,32 @@
 
 int main(void) 
 {
-	// Configuração do pino PB5 (13 no Arduino Uno) como saída
-	DDRB  |=  (1<<5);		// Direção: Saída
+	// Configurações das entradas e saídas
+	// Entradas
+	DDRB &= ~((1<<2)|(1<<1));
+	PORTB |= ((1<<2)|(1<<1));	// Pull-up 
 
-	// Inicialização do nível lógico no pino PB5
-	PORTB &= ~(1<<5);		// PB5 = 0
+	// Saídas
+	DDRB |= ((1<<3)|(1<<4)|(1<<5));
+	PORTB &= ~(1<<3); // Zero 
+	PORTB &= ~(1<<4); // Zero 
+	PORTB &= ~(1<<5); // Zero 
 
-    while (1) 				// Loop infinito
-    {
-		PORTB |=  (1<<5);	// PB5 = 1
-		_delay_ms(500);		// Atraso de 500ms
-
-		PORTB &= ~(1<<5);	// PB5 = 0
-		_delay_ms(500);		// Atraso de 500ms
-    }
+	while( 1 )
+	{
+		if( !(PINB & (1<<2)) ) // S1
+		{
+			PORTB |= (1<<3);	// K1
+			PORTB |= (1<<4);	// K2
+			_delay_ms(5000);
+			PORTB &= ~(1<<4);	// K2
+			PORTB |= (1<<5);	// K3
+		}
+		else if( !(PINB & (1<<1)) ) // S0
+		{
+			PORTB &= ~(1<<3); // Zero 
+			PORTB &= ~(1<<4); // Zero 
+			PORTB &= ~(1<<5); // Zero 
+		}
+	}
 }
